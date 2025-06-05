@@ -26,12 +26,13 @@ public class Main {
          *
          */
 
-        // scanner
+        // scanner and variables
         Scanner scanner = new Scanner(System.in);
-        while (true) {
+        String[] operations = {"*", "/", "+", "-", "^"};
+        double awnser = 0;
+        do {
             // variables
-            String[] operations = {"*", "/", "+", "-", "^"};
-            String operation = "+";
+            String operation = "";
             boolean exit = false;
             String[] inputParsed;
             double result = 0;
@@ -39,9 +40,16 @@ public class Main {
             double number2 = 0;
 
             // input
-            print("Enter your formula as for example '6*9' and '6 * 9'. You can use the '+', '-', '*', '/' and '^' operators:");
+            print("Enter your formula as for example '6*9' and '6 * 9'.\nYou can use the '+', '-', '*', '/' and '^' operators\nYou can use 'ans' to reuse last answer:");
             while (!exit) {
                 inputParsed = scanner.nextLine().replaceAll(" ", "").split("(?<=[-+*/^])|(?=[-+*/^])");
+
+                // Awner memory
+                if (inputParsed[0].equals("ans")) {
+                    inputParsed[0] = Double.toString(awnser);
+                } else if (inputParsed[2].equals("ans")) {
+                    inputParsed[2] = Double.toString(awnser);
+                }
 
                 // will make sure number 1 and 2 are valid numbers
                 try {
@@ -52,7 +60,7 @@ public class Main {
                     continue;
                 }
 
-                // device by zero check
+                // divide by zero check
                 if (number2 == 0 && operation.equals("/")) {
                     print("Error: Can't divide by 0");
                     continue;
@@ -60,12 +68,13 @@ public class Main {
 
                 // operations check
                 operation = inputParsed[1];
-                for (String operator: operations) {
+                for (String operator : operations) {
                     if (operator.equals(operation)) {
                         exit = true;
                         break;
                     }
-                } if (!exit) {
+                }
+                if (!exit) {
                     print("Error: unsupported operator: " + operation);
                 }
             }
@@ -79,11 +88,11 @@ public class Main {
                 case "^" -> Math.pow(number1, number2);
                 default -> result;
             };
+            awnser = result;
 
             // exit
             print(number1 + " " + operation + " " + number2 + " = " + result);
             print("Do you want to calculate again? Y or N:");
-            if (scanner.nextLine().equalsIgnoreCase("n")) {break;}
-        }
+        } while (!scanner.nextLine().equalsIgnoreCase("n"));
     }
 }
