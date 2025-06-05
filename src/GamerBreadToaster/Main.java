@@ -1,9 +1,11 @@
 package GamerBreadToaster;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Main {
-    /* easy print method */
+    // easy print method
     static void print(Object message) {System.out.println(message);}
 
     public static void main(String[] args) {
@@ -94,5 +96,18 @@ public class Main {
             print(number1 + " " + operation + " " + number2 + " = " + result);
             print("Do you want to calculate again? Y or N:");
         } while (!scanner.nextLine().equalsIgnoreCase("n"));
+    }
+
+    // operations finder
+    public Map<Integer, String> operationFinder(String[] input) {
+        String[] operations = {"*", "/", "+", "-", "^"};
+        Map<Integer, String> operationMap = new HashMap<>();
+
+        // finding the operation in the input
+        for (int x = 0; x < input.length; x++) {for (String y: operations) {
+            if (input[x].equals(y)) operationMap.put(x, y);
+        }}
+
+        return operationMap;
     }
 }
