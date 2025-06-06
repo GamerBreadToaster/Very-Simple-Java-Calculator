@@ -23,6 +23,8 @@ public class Main {
          *
          */
 
+        // TODO: add negative number support
+
         // scanner and variables
         Scanner scanner = new Scanner(System.in);
         while (true) {
@@ -48,7 +50,10 @@ public class Main {
                     keys.add(entry.getKey());
                 }
                 try {
-                    if (keys.getFirst() == 0 || keys.getLast() == inputParsed.length - 1) {
+                    if (keys.getFirst() == 0 && !operationMap.get(keys.getFirst()).equals("-")) {
+                        print("Error: A operator cannot be at the begin or end!");
+                        continue;
+                    } else if (keys.getLast() == inputParsed.length - 1) {
                         print("Error: A operator cannot be at the begin or end!");
                         continue;
                     }
