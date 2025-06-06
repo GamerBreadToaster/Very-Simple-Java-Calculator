@@ -47,8 +47,13 @@ public class Main {
                 for (Map.Entry<Integer, String> entry: operationMap.entrySet()) {
                     keys.add(entry.getKey());
                 }
-                if (keys.getFirst() == 0 || keys.getLast() == inputParsed.length-1) {
-                    print("Error: A operator cannot be at the begin or end!");
+                try {
+                    if (keys.getFirst() == 0 || keys.getLast() == inputParsed.length - 1) {
+                        print("Error: A operator cannot be at the begin or end!");
+                        continue;
+                    }
+                } catch (NoSuchElementException e) {
+                    print("Error: You can't enter nothing!");
                     continue;
                 }
                 // two operators next to each other checker
