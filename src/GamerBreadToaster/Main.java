@@ -31,7 +31,6 @@ public class Main {
             boolean again = false;
             String[] inputParsed = null;
             String inputRaw = "";
-            List<Integer> keys = new ArrayList<>();
             double result = 0;
             Map<Integer, String> operationMap = Map.of();
 
@@ -41,11 +40,16 @@ public class Main {
             while (!exit) {
                 inputRaw = scanner.nextLine();
                 inputParsed = inputRaw.replaceAll(" ", "").split("(?<=[-+*/^])|(?=[-+*/^])");
+                List<Integer> keys = new ArrayList<>();
 
                 // operations parsing
                 operationMap = operationFinder(inputParsed);
                 for (Map.Entry<Integer, String> entry: operationMap.entrySet()) {
                     keys.add(entry.getKey());
+                }
+                if (keys.getFirst() == 0 || keys.getLast() == inputParsed.length-1) {
+                    print("Error: A operator cannot be at the begin or end!");
+                    continue;
                 }
                 // two operators next to each other checker
                 for (int key = 0; key < keys.size(); key++) {
@@ -53,18 +57,15 @@ public class Main {
                     if (key2 < keys.size()) {
                         if ((keys.get(key2) - keys.get(key)) != 2) {
                             print("Error: You can't have two operators next to each other");
-                            again = false;
                             break;
-                        } else {exit = true;}
-                    }
-                    if (again) {continue;}
+                        }
+                    } else {exit = true;}
                 }
             }
             List<String> inputList = new ArrayList<>(Arrays.asList(inputParsed));
 
             // result
             // calculation rules: power -> division or multiplication  -> sum / subtraction
-            again = false;
             boolean divisionBy0 = false;
             while (inputList.size() != 1) {
                 for (Map.Entry<Integer, String> entry : operationMap.entrySet()) {
