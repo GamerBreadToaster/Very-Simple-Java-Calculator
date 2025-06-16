@@ -95,6 +95,7 @@ public class Main {
                                 inputParsedList.remove(targetKey);
                                 inputParsedList.add(targetKey, "-"+inputParsedList.get(targetKey));
                                 inputParsedList.remove(targetKey+1);
+                                inputParsed = inputParsedList.toArray(new String[0]);
                                 keys.remove(key2);
                             } else {
                                 print("Error: You can't have two operators next to each other");
@@ -102,7 +103,7 @@ public class Main {
                             }
                         }
                         // checking if first operator exists and is "-"
-                        if (keys.getFirst() == 0 && operationMap.get(keys.getFirst()).equals("-")) {
+                        if (keys.getFirst() == 0 && operationMap.get(keys.getFirst()).equals("-") && key == 0) {
                             List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
                             keys.removeFirst();
                             inputParsedList.removeFirst();
@@ -115,8 +116,8 @@ public class Main {
                         // correcting keys list and operationMap
                         if (!beginsWithMinus) {targetKey = keys.get(key);}
                         while(true) {
+                            int x = 0;
                             try {
-                                int x = 0;
                                 for (Integer i : keys) {
                                     if (i > targetKey) {
                                         operation = operationMap.get(i);
@@ -132,6 +133,7 @@ public class Main {
                                 continue; // ignore problem because I don't know how to fix it, this is a workaround
                                 // band-aid fix but it works lmao
                             }
+                            beginsWithMinus = false;
                             break;
                         }
 
