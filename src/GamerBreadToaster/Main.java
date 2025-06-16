@@ -1,5 +1,4 @@
 package GamerBreadToaster;
-
 import java.util.*;
 
 public class Main {
@@ -23,7 +22,8 @@ public class Main {
          *
          */
 
-        // TODO: add negative number support
+        // TODO: test the under 0 numbers addition
+        // TODO: add the aws support
 
         // scanner and variables
         Scanner scanner = new Scanner(System.in);
@@ -31,8 +31,11 @@ public class Main {
             // variables
             boolean exit = false;
             boolean again = false;
+            boolean beginsWithMinus = false;
             String[] inputParsed = null;
             String inputRaw = "";
+            String operation;
+            int targetKey = 0;
             double result = 0;
             Map<Integer, String> operationMap = Map.of();
 
@@ -64,13 +67,83 @@ public class Main {
                 // two operators next to each other checker
                 for (int key = 0; key < keys.size(); key++) {
                     int key2 = key+1;
-                    if (key2 < keys.size()) {
+                    if (key2 < keys.size() || operationMap.get(keys.getFirst()).equals("-")) {
+                        // negative numbers check and will correct two subtractions with a single addition.
                         if ((keys.get(key2) - keys.get(key)) != 2) {
-                            print("Error: You can't have two operators next to each other");
+                            if (operationMap.get(keys.get(key)).equals("-") && operationMap.get(keys.get(key2)).equals("-")){
+                                // iterate trough operationMap to decrease all position of the operations after
+                                // removing one. EX: 7+6--6*9, operationMap = 1 -> "+", 3 -> "-", 4 -> "-", 6 -> "*"
+                                // becomes 1 -> "+", 3 -> "+", 5 -> "*" thus becoming 7+6+6*9
+                                List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
+                                operationMap.remove(keys.get(key2));
+                                operationMap.replace(keys.get(key), "+");
+                                targetKey = keys.get(key);
+                                inputParsedList.remove(targetKey);
+                                inputParsedList.remove(targetKey);
+                                inputParsedList.add(targetKey, "+");
+                                inputParsed = inputParsedList.toArray(new String[0]);
+                                keys.remove(key2);
+                            }
+
+                            // Making the negative number, an actual negative number
+                            // by making sure the operationMap and keys are properly adjusted
+                            // and editing the number in inputParsed to make it negative
+                            else if (operationMap.get(keys.get(key2)).equals("-")) {
+                                List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
+                                operationMap.remove(keys.get(key2));
+                                targetKey = keys.get(key2);
+                                inputParsedList.remove(targetKey);
+                                inputParsedList.add(targetKey, "-"+inputParsedList.get(targetKey));
+                                inputParsedList.remove(targetKey+1);
+                                keys.remove(key2);
+                            } else {
+                                print("Error: You can't have two operators next to each other");
+                                break;
+                            }
+                        }
+                        // checking if first operator exists and is "-"
+                        if (keys.getFirst() == 0 && operationMap.get(keys.getFirst()).equals("-")) {
+                            List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
+                            keys.removeFirst();
+                            inputParsedList.removeFirst();
+                            inputParsedList.removeFirst();
+                            inputParsedList.addFirst("-" + inputParsed[1]);
+                            inputParsed = inputParsedList.toArray(new String[0]);
+                            operationMap.remove(0);
+                            beginsWithMinus = true;
+                        }
+                        // correcting keys list and operationMap
+                        if (!beginsWithMinus) {targetKey = keys.get(key);}
+                        while(true) {
+                            try {
+                                int x = 0;
+                                for (Integer i : keys) {
+                                    if (i > targetKey) {
+                                        operation = operationMap.get(i);
+                                        operationMap.remove(i);
+                                        operationMap.put(i - 1, operation);
+                                        targetKey = i-1;
+                                        keys.add(x, i - 1);
+                                        x++;
+                                        keys.remove(x);
+                                    } else x++;
+                                }
+                            } catch (RuntimeException e) {
+                                continue; // ignore problem because I don't know how to fix it, this is a workaround
+                                // band-aid fix but it works lmao
+                            }
                             break;
                         }
-                    } else {exit = true;}
-                }
+
+                        // sorting operationMap
+                        Map<Integer, String> newOperationMap = new LinkedHashMap<>();
+                        for (Integer integer : keys) {
+                            newOperationMap.put(integer, operationMap.get(integer));
+                        }
+                        operationMap = newOperationMap;
+                        }
+                        exit = true;
+                    }
             }
             List<String> inputList = new ArrayList<>(Arrays.asList(inputParsed));
 
