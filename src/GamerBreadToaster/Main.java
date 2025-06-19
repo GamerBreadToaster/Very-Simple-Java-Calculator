@@ -22,17 +22,17 @@ public class Main {
          *
          */
 
-        // TODO: test the under 0 numbers addition
-        // TODO: add the aws support
-
         // scanner and variables
         Scanner scanner = new Scanner(System.in);
+        double answer = 0;
         while (true) {
             // variables
             boolean exit = false;
             boolean again = false;
             boolean beginsWithMinus = false;
+            boolean doConvertTest = false;
             String[] inputParsed = null;
+            String[] operators = {"-", "+", "*", "/", "^"};
             String inputRaw = "";
             String operation;
             int targetKey = 0;
@@ -52,6 +52,32 @@ public class Main {
                 for (Map.Entry<Integer, String> entry: operationMap.entrySet()) {
                     keys.add(entry.getKey());
                 }
+
+                // replacing ans in inputParsed with the value of ans
+                List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
+                for (int i = 0; i < inputParsedList.size(); i++) {
+                    if (inputParsedList.get(i).equalsIgnoreCase("ans")) {
+                        inputParsedList.remove(i);
+                        inputParsedList.add(i, String.valueOf(answer));
+                    }
+                    // looking for anything not a number (or operator)
+                    try {
+                        for (String j: operators) {
+                            if (inputParsedList.get(i).equals(j)) {break;}
+                            doConvertTest = true;
+                        }
+                        if (doConvertTest) {
+                            double convertTest = Double.parseDouble(inputParsedList.get(i));
+                        }
+                    } catch (NumberFormatException e) {
+                        print("You can only put in (negative) numbers, operators and 'ans'!");
+                        break;
+                    }
+                    doConvertTest = false;
+                }
+                if (doConvertTest) {continue;}
+                inputParsed = inputParsedList.toArray(new String[0]);
+
                 try {
                     if (keys.getFirst() == 0 && !operationMap.get(keys.getFirst()).equals("-")) {
                         print("Error: A operator cannot be at the begin or end!");
@@ -74,7 +100,7 @@ public class Main {
                                 // iterate trough operationMap to decrease all position of the operations after
                                 // removing one. EX: 7+6--6*9, operationMap = 1 -> "+", 3 -> "-", 4 -> "-", 6 -> "*"
                                 // becomes 1 -> "+", 3 -> "+", 5 -> "*" thus becoming 7+6+6*9
-                                List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
+                                inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
                                 operationMap.remove(keys.get(key2));
                                 operationMap.replace(keys.get(key), "+");
                                 targetKey = keys.get(key);
@@ -89,7 +115,7 @@ public class Main {
                             // by making sure the operationMap and keys are properly adjusted
                             // and editing the number in inputParsed to make it negative
                             else if (operationMap.get(keys.get(key2)).equals("-")) {
-                                List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
+                                inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
                                 operationMap.remove(keys.get(key2));
                                 targetKey = keys.get(key2);
                                 inputParsedList.remove(targetKey);
@@ -104,7 +130,7 @@ public class Main {
                         }
                         // checking if first operator exists and is "-"
                         if (keys.getFirst() == 0 && operationMap.get(keys.getFirst()).equals("-") && key == 0) {
-                            List<String> inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
+                            inputParsedList = new ArrayList<>(Arrays.asList(inputParsed));
                             keys.removeFirst();
                             inputParsedList.removeFirst();
                             inputParsedList.removeFirst();
@@ -202,6 +228,7 @@ public class Main {
             // exit
             if (!divisionBy0) {
                 print(inputRaw + " = " + result);
+                answer = result;
                 print("Do you want to calculate again? Y or N:");
                 if (scanner.nextLine().equalsIgnoreCase("n")) {break;}
             }
